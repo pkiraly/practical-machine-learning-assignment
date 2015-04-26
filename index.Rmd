@@ -5,18 +5,52 @@ date: "04/26/2015"
 output: html_document
 ---
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+First I get a picture of the whole dataset. It turned out that many variables has empty or NA values, and only approx. 60 variables (out of 160) contain real values in every observations. So I first create a vecor of those variable names I could successfully use in the prediction. I removed thos variables with NA-s, and some other fields, which doesn't seems to be predictors (such as counter, personal identifier, timestamp variables). At the end I had a data frame with less variables, but having all observations complete.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+Here is the code to find the important fields
 
-```{r}
-summary(cars)
+```
+t <- data.frame(colSums(!is.na(training)))
+names(t) <- c('num')
+t$field <- rownames(t)
+# 19622 is the number of observations in the data set
+fieldset <- subset(t, num == 19622, c(field))[,c('field')]
+rm(t)
+unnecessary <- c('X', 'classe', 'user_name', 'raw_timestamp_part_1', 
+                 'raw_timestamp_part_2', 'cvtd_timestamp', 'new_window', 'num_window')
+fieldset <- setdiff(fieldset, unnecessary)
 ```
 
-You can also embed plots, for example:
+After that I created a filtered datasets, which contain only the relevant fields, and then I created the model:
 
-```{r, echo=FALSE}
-plot(cars)
+```
+model <- randomForest(classe ~ ., data = filtered.training, ntree = 100)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+The ntree argument means the number of tree to create for the rendom forest algorithm. The higher the value, the higher the precision, but the longer the whole process took.
+
+Here is a short summary I've created when comparing different ntree settings:
+
+```
+ntree            10     50    100   1000   2000    5000
+time taken       2s    11s    12s  1.98m  4.37m  13.13m
+Accuracy (%)  96.67  99.50  99.63  99.74  99.73   99.72
+```
+
+As you can see the increasing of ntree doesn't improve the accuracy after a point, but it took more time and computer resources, so in the final code I kept 100.
+
+The last step is prediction, which is pretty straigtforward:
+
+```
+predict(model, filtered.testing)
+```
+
+and in all cases of ntree setting it gave the following result:
+
+```
+ 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 
+ B  A  B  A  A  E  D  B  A  A  B  C  B  A  E  E  A  B  B  B 
+Levels: A B C D E
+```
+
+Note: from the submitted code I removed the display of confusion matrix and the time measurement. 
