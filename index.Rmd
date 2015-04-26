@@ -8,6 +8,7 @@ output: html_document
 First I get a picture of the whole dataset. It turned out that many variables has empty or NA values, and only approx. 60 variables (out of 160) contain real values in every observations. So I first create a vecor of those variable names I could successfully use in the prediction. I removed thos variables with NA-s, and some other fields, which doesn't seems to be predictors (such as counter, personal identifier, timestamp variables). At the end I had a data frame with less variables, but having all observations complete.
 
 Here is the code to find the important fields
+
 ```
 t <- data.frame(colSums(!is.na(training)))
 names(t) <- c('num')
@@ -15,9 +16,6 @@ t$field <- rownames(t)
 # 19622 is the number of observations in the data set
 fieldset <- subset(t, num == 19622, c(field))[,c('field')]
 rm(t)
-# removing unnecessary fields
-# X is a counter, user_name, timestamps and windows seems to be only administrative data
-# classe is the output variable but it is not available in test dataset
 unnecessary <- c('X', 'classe', 'user_name', 'raw_timestamp_part_1', 
                  'raw_timestamp_part_2', 'cvtd_timestamp', 'new_window', 'num_window')
 fieldset <- setdiff(fieldset, unnecessary)
@@ -39,7 +37,9 @@ time taken       2s    11s    12s  1.98m  4.37m  13.13m
 Accuracy (%)  96.67  99.50  99.63  99.74  99.73   99.72
 ```
 
-The last step is prediction, which is pretty straigtforward
+As you can see the increasing of ntree doesn't improve the accuracy after a point, but it took more time and computer resources, so in the final code I kept 100.
+
+The last step is prediction, which is pretty straigtforward:
 
 ```
 predict(model, filtered.testing)
@@ -53,4 +53,4 @@ and in all cases of ntree setting it gave the following result:
 Levels: A B C D E
 ```
 
-Note: from the submitted code I removed the displaz of confusion matrix and the time measurement.
+Note: from the submitted code I removed the display of confusion matrix and the time measurement. 

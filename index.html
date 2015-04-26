@@ -76,9 +76,6 @@ t$field &lt;- rownames(t)
 # 19622 is the number of observations in the data set
 fieldset &lt;- subset(t, num == 19622, c(field))[,c('field')]
 rm(t)
-# removing unnecessary fields
-# X is a counter, user_name, timestamps and windows seems to be only administrative data
-# classe is the output variable but it is not available in test dataset
 unnecessary &lt;- c('X', 'classe', 'user_name', 'raw_timestamp_part_1', 
                  'raw_timestamp_part_2', 'cvtd_timestamp', 'new_window', 'num_window')
 fieldset &lt;- setdiff(fieldset, unnecessary)</code></pre>
@@ -89,13 +86,14 @@ fieldset &lt;- setdiff(fieldset, unnecessary)</code></pre>
 <pre><code>ntree            10     50    100   1000   2000    5000
 time taken       2s    11s    12s  1.98m  4.37m  13.13m
 Accuracy (%)  96.67  99.50  99.63  99.74  99.73   99.72</code></pre>
-<p>The last step is prediction, which is pretty straigtforward</p>
+<p>As you can see the increasing of ntree doesn’t improve the accuracy after a point, but it took more time and computer resources, so in the final code I kept 100.</p>
+<p>The last step is prediction, which is pretty straigtforward:</p>
 <pre><code>predict(model, filtered.testing)</code></pre>
 <p>and in all cases of ntree setting it gave the following result:</p>
 <pre><code> 1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 
  B  A  B  A  A  E  D  B  A  A  B  C  B  A  E  E  A  B  B  B 
 Levels: A B C D E</code></pre>
-<p>Note: from the submitted code I removed the displaz of confusion matrix and the time measurement.</p>
+<p>Note: from the submitted code I removed the display of confusion matrix and the time measurement.</p>
 
 
 </div>
