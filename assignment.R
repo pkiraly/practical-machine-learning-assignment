@@ -43,13 +43,7 @@ filtered.training <- training[, fieldset]
 set.seed(23716)
 
 # built your model
-start.time <- Sys.time()
 model <- randomForest(classe ~ ., data = filtered.training, ntree = 100)
-end.time <- Sys.time()
-time.taken <- end.time - start.time
-time.taken
-
-confusionMatrix(model$predicted, training$classe)
 
 # predict 20 different test cases 
 predict(model, filtered.testing)
