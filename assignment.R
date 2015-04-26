@@ -43,8 +43,7 @@ filtered.training <- training[, fieldset]
 set.seed(23716)
 
 # built your model
-# model <- randomForest(classe ~ ., data = filtered.training, ntree = 100)
-model <- train(classe ~ ., data=filtered.training, method="rf", ntree=100)
+model <- randomForest(classe ~ ., data = filtered.training, ntree = 100)
 
 # predict 20 different test cases 
 predict(model, filtered.testing)
